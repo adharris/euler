@@ -1,4 +1,0 @@
-euler
-=====
-
-Project Euler solutions
