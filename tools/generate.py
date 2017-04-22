@@ -11,15 +11,10 @@ from pathlib import Path
 
 @click.command()
 @click.argument('problem', type=int)
-def generate(problem):
-    
-    # name, content = get_problem_info(problem)
-    
-    # print(render_problem(problem, name, content))
-    # print(render_group_init(problem))
-
+@click.option('--option', '-o', type=(str, int), multiple=True)
+def generate(problem, option):
     create_directory(problem)
-    create_python_file(problem)
+    create_python_file(problem, option)
     update_minor_init(problem)
     update_major_init(get_major_path(problem))
     update_major_init(get_problems_path())
@@ -31,9 +26,9 @@ def create_directory(problem):
     except FileExistsError:
         pass
 
-def create_python_file(problem):
+def create_python_file(problem, options):
     path = get_file_path(problem)
-    rendered = render_problem(problem)
+    rendered = render_problem(problem, options)
     if path.exists():
         click.secho('Python file exists, skipping', fg='red')
         return
@@ -62,13 +57,14 @@ def update_major_init(path):
         f.write(rendered)
 
 
-def render_problem(number):
-    name, content = get_problem_info(number)   
+def render_problem(problem, options):
+    name, content = get_problem_info(problem)   
     template = Template(command_template)
     content = '\n    '.join(r for r in content.splitlines())
     rendered = template.render(
-        problem=number,
-        method=create_method_name(number),
+        problem=problem,
+        options=options,
+        method=create_method_name(problem),
         name=name, 
         content=content)
     return rendered
@@ -136,7 +132,15 @@ command_template = '''
 import click
 
 @click.command('{{ problem }}')
-def {{ method }}():
+{%- for name, default in options %}
+@click.option('--{{ name }}', '-{{ name[0] }}', type=int, default={{ default }})
+{%- endfor %}
+@click.option('--verbose', '-v', count=True)
+def {{ method }}(
+{%- for name, default in options -%}
+{{ name }}
+{%- endfor -%}
+, verbose):
     """{{ name }}
 
     {{ content }}

@@ -7,7 +7,7 @@ from itertools import count, chain, combinations
 from collections import Counter
 from functools import reduce
 from operator import mul
-from tools import unbounded_sieve_of_eratosthenes, factor_with_primes
+from tools.primes import PrimeCache
 
 @click.command('12')
 @click.option('--count', '-c', type=int, default=500)
@@ -39,33 +39,16 @@ def problem_012(count):
     """
 
     triangle_numers = generate_triangle_numbers()
-    rolling = RollingFactor()
+    primes = PrimeCache()
     
     while True:
         number = next(triangle_numers)
-        factors = rolling.factor(number)
+        factors = primes.factor(number)
         if count_factors(factors) >= count:
             click.echo('{} has {} factors'.format(
                 click.style(str(number), bold=True),
                 count_factors(factors)))
             break
-
-
-class RollingFactor(object):
-
-    def __init__(self):
-        self.sieve = unbounded_sieve_of_eratosthenes()
-        self.primes = []
-    
-    def factor(self, number):
-        self.ensure_factors_for(number)
-        factors = factor_with_primes(number, self.primes)
-        return factors
-
-    def ensure_factors_for(self, number):
-        highest_needed = int(sqrt(number)) + 1
-        while len(self.primes) == 0 or self.primes[-1] < highest_needed:
-            self.primes.append(next(self.sieve))
 
 
 def count_factors(prime_factors):
