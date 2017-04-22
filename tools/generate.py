@@ -117,6 +117,7 @@ def get_problem_info(problem):
     soup = bs4.BeautifulSoup(response.text, "html.parser")
     try:
         name = soup.select('h2')[0].get_text()
+        name = name if name.endswith('.') else name + '.'
         content = str(soup.select('.problem_content')[0])
         h = html2text.HTML2Text()
         h.body_width = 74
@@ -138,9 +139,9 @@ import click
 @click.option('--verbose', '-v', count=True)
 def {{ method }}(
 {%- for name, default in options -%}
-{{ name }}
+{{ name }},
 {%- endfor -%}
-, verbose):
+ verbose):
     """{{ name }}
 
     {{ content }}

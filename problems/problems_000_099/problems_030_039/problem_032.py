@@ -38,6 +38,7 @@ def problem_032(digits, verbose):
     if verbose > 0:
         for m in matches:
             click.echo("{} × {} = {}".format(*m))
+
     click.echo(sum({m[2] for m in matches}))
             
 

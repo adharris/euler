@@ -12,3 +12,22 @@ def fibonacci():
         previous = current
         current = next_value
         yield current
+        
+
+def triangle_numbers():
+    total = 1
+    count = 1
+    while True:
+        yield total
+        count += 1
+        total += count
+        
+
+def yield_terms(iterable, indecies):
+    enumerated = enumerate(iterable)
+    for index in indecies:
+        while True:
+            i, v = next(enumerated)
+            if i == index:
+                yield v
+                break
