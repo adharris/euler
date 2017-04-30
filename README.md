@@ -1,4 +1,4 @@
-![Project Euler])https://projecteuler.net/profile/adharris.png)
+![Project Euler](https://projecteuler.net/profile/adharris.png)
 
 This is a repository of my [Project Euler](https://projecteuler.net) solutions.
 
