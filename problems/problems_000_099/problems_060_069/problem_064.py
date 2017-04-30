@@ -37,40 +37,41 @@ def problem_064(limit, verbose):
     How many continued fractions for N ≤ 10000 have an odd period?
     
     """
-
+    
     numbers = range(2, limit + 1)
-    fractions = (create_continued_fraction(sqrt(n)) for n in numbers)
-    irrational = (f for f in fractions if len(f.coefficents) > 0)
-    odd = (f for f in fractions if len(f.coefficents) % 2 == 1)
-
-    for f in odd:
-        click.echo(len(list(odd)))
-
-
-ContinuedFraction = namedtuple('ContinuedFraction', 'integer coefficents fractional')
-
-
-
-def create_continued_fraction(number):
-    integer_part = int(number)
-    fractional_part = number - integer_part
-    cf = ContinuedFraction(integer_part, tuple(), fractional_part)
-    if cf.fractional == 0:
-        return cf
-    cf = continue_fraction(cf)
-    while cf.coefficents[-1] != cf.integer * 2 and cf.fractional != 0:
-        cf = continue_fraction(cf)
-    return cf
+    bar = click.progressbar(numbers)
+    with bar:
+        fractions = (find_continuted_fraction(n) for n in bar)
+        irrational = (f for f in fractions if len(f.coefficents) > 0)
+        odd = [f for f in fractions if len(f.coefficents) % 2 == 1]
+        
+    if verbose:
+        lines = ["√{} = {}".format(f.base, format_continuted_fraction(f)) for f in odd]
+        click.echo_via_pager("\n".join(lines))       
+    
+    click.echo(len(list(odd)))
 
 
-def continue_fraction(continued_fraction):
-    reciprocal = 1 / continued_fraction.fractional
-    integer_part = int(reciprocal)
-    fractional_part = reciprocal - integer_part
-    return ContinuedFraction(
-        continued_fraction.integer,
-        continued_fraction.coefficents + (integer_part, ),
-        fractional_part)
+ContinuedFraction = namedtuple('ContinuedFraction', 'integer coefficents base')
+
+
+def find_continuted_fraction(number):
+    """https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Continued_fraction_expansion"""
+
+    if int(sqrt(number)) == sqrt(number):
+        return ContinuedFraction(int(sqrt(number)), (), number)
+
+    m = 0
+    d = 1
+    a = [int(sqrt(number)) ]
+
+    while a[-1] != a[0] * 2:
+        m = d * a[-1] -  m
+        d = (number - m**2) // d
+        next_a = int((a[0] + m) / d)
+        a.append(next_a)
+
+    return ContinuedFraction(a[0], a[1:], number)
 
 
 def format_continuted_fraction(f):

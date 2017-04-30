@@ -14,3 +14,6 @@ specifies.
 Additionally, the `euler generate N` command generates a python file in the 
 appropriate directory, with the Click command pre-built and the problem 
 language as the function docstring.
+
+I reset my progress on April 21st 2017. Old solutions up to problem 110ish are
+on the legacy branch.
