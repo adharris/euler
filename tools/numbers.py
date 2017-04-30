@@ -1,6 +1,7 @@
 
 from math import log
 
+
 def digit(number, n):
     """Return the digit in the nth significant place"""
     return (number // 10 ** n) % 10
@@ -8,7 +9,12 @@ def digit(number, n):
 
 def digit_count(n):
     """Returns the numer of digits in n"""
-    return int(log(n, 10)) + 1
+    return len(str(n))
+
+
+def set_digit(number, d, v):
+    base = 10**d
+    return number - base * digit(number, d) + base * v
 
 
 def iter_digits(n):

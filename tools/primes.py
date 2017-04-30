@@ -4,6 +4,7 @@ from itertools import count, chain, combinations
 from collections import Counter
 from operator import mul
 from functools import reduce
+from random import randint
 
 
 def sieve_of_eratosthenes(limit):
@@ -74,6 +75,14 @@ class PrimeCache(object):
     def __init__(self, batch=10000):
         self.sieve = unbounded_sieve_of_eratosthenes(batch)
         self.primes = []
+        self.prime_set = set()
+
+    def __iter__(self):
+        self.ensure_factors_for(10000)
+        for i in count():
+            if len(self.primes) <= i:
+                self.ensure_factors_for(self.primes[-1] + 10000)
+            yield self.primes[i]
     
     def factor(self, number):
         self.ensure_factors_for(number)
@@ -82,7 +91,7 @@ class PrimeCache(object):
         
     def is_prime(self, number):
         self.ensure_factors_for(number)
-        return number in self.primes
+        return number in self.prime_set
 
     def count_divisors(self, number):
         primes = self.factor(number)
@@ -100,7 +109,9 @@ class PrimeCache(object):
     def ensure_factors_for(self, number):
         highest_needed = number
         while len(self.primes) == 0 or self.primes[-1] < highest_needed:
-            self.primes.append(next(self.sieve))
+            p = next(self.sieve)
+            self.primes.append(p)
+            self.prime_set.add(p)
 
 
 def count_proper_divisors(prime_factors):
@@ -108,3 +119,90 @@ def count_proper_divisors(prime_factors):
     counts = Counter(prime_factors)
     powers = (a + 1 for a in counts.values())
     return reduce(mul, powers, 1)
+
+
+def miller_rabin_test(number, k):
+
+    if number % 2 == 0:
+        return False
+        
+    r = 1
+    while ((number - 1) / 2**r) % 2 == 0:
+        r += 1
+
+    d = (number - 1) // 2**r
+
+    print(d, r)
+    
+    for i in range(k):
+        a = randint(2, number - 2)
+        x = a**d % number
+        
+        if x == 1 or x == number - 1:
+            continue
+        
+        for j in range(0, r - 1):
+            x = x**2 % number
+            if x == 1:
+                return False
+            if x == number - 1:
+                break
+            
+            if j == r - 2:
+                return False
+        
+    return True
+
+
+miller_rabin_thresholds = [
+    (2047, (2, )),
+    (1373653, (2, 3)),
+    (9080191, (31, 73)),
+    (25326001, (2, 3, 5)),
+    (3215031751, (2, 3, 5, 7)),
+    (4759123141, (2, 7, 61)),
+    (1122004669633, (2, 13, 23, 1662803)),
+    (2152302898747, (2, 3, 5, 7, 11)),
+    (3474749660383, (2, 3, 5, 7, 11, 13)),
+    (341550071728321, (2, 3, 5, 7, 11, 13, 17)),
+]
+
+
+def deterministic_miller_rabin_test(number):
+    if number % 2 == 0:
+        return False
+
+    a_values = next(t[1] for t in miller_rabin_thresholds if number < t[0])
+    
+    s, d = miller_rabin_find_r_d(number)
+    for a in a_values:
+
+        if mod_base(a, d, number) == 1:
+            continue
+
+        for r in range(0, s):
+            if mod_base(a, (2**r * d), number) == number - 1:
+                break
+
+            if r == s - 1:
+                return False
+                
+    return True
+
+
+def mod_base(base, exp, mod):
+    result = 1
+    while exp > 0:
+        if exp % 2 == 1:
+            result = (result * base) % mod
+        base = base ** 2 % mod
+        exp = exp // 2
+    return result
+
+def miller_rabin_find_r_d(number):
+    r = 1
+    while ((number - 1) / 2**r) % 2 == 0:
+        r += 1
+
+    d = (number - 1) // 2**r
+    return r, d

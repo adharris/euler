@@ -6,6 +6,7 @@ from .problems_030_039 import all_commands as problems_030_039
 from .problems_000_009 import all_commands as problems_000_009
 from .problems_060_069 import all_commands as problems_060_069
 from .problems_040_049 import all_commands as problems_040_049
+from .problems_050_059 import all_commands as problems_050_059
 
 all_commands = list(chain(
     problems_010_019,
@@ -14,6 +15,7 @@ all_commands = list(chain(
     problems_000_009,
     problems_060_069,
     problems_040_049,
+    problems_050_059,
 ))
 
 __all__ = ['all_commands']
