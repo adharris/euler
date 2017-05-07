@@ -2,9 +2,8 @@
 
 import click
 
-from collections import defaultdict
-from functools import reduce
-from operator import mul, itemgetter
+from tools.primes import sieve_factors, calculate_totient
+from operator import itemgetter
 
 
 @click.command('69')
@@ -41,30 +40,4 @@ def problem_069(limit,verbose):
     ratio = ((n, n / φ) for n, φ in totient)
     highest_ratio = max(ratio, key=itemgetter(1))
     click.echo("{0}/φ({0})={1}".format(*highest_ratio))
-
-
-def calculate_totient(number, factors):
-
-    # Euler's Product formula:
-    # φ(n) = n(1 - 1/p1)(1 - 1/p2)...(1-1/pr)
-    # where p1..pr are unique factors of n
-
-    return int(reduce(mul, ((1 - (1 / p)) for p in factors), number))
-
-
-def sieve_factors(limit):
-    factors = defaultdict(tuple)
-
-    for i in range(2, limit // 2 + 1):
-
-        # If we haven't seen factors if i, it is prime
-        if len(factors[i]) == 0:
-            factors[i] = ()
-        
-            # Normally we can loop starting a n^2, but since we are collecting
-            # factors, we need to start at n
-            for j in range(i, limit + 1, i):
-                factors[j] += (i, )
-
-    return factors
 

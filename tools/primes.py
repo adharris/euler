@@ -1,9 +1,9 @@
 
-from math import sqrt, ceil
-from itertools import count, chain, combinations
-from collections import Counter
-from operator import mul
+from collections import Counter, defaultdict
 from functools import reduce
+from itertools import chain, combinations, count
+from math import ceil, sqrt
+from operator import mul
 from random import randint
 
 
@@ -112,6 +112,32 @@ class PrimeCache(object):
             p = next(self.sieve)
             self.primes.append(p)
             self.prime_set.add(p)
+
+
+def calculate_totient(number, factors):
+    # Euler's Product formula:
+    # φ(n) = n(1 - 1/p1)(1 - 1/p2)...(1-1/pr)
+    # where p1..pr are unique factors of n
+    return int(reduce(mul, ((1 - (1 / p)) for p in factors), number))
+
+
+def sieve_factors(limit):
+    factors = defaultdict(tuple)
+
+    for i in range(2, limit + 1):
+
+        # If we haven't seen factors if i, it is prime
+        if len(factors[i]) == 0:
+            factors[i] = ()
+        
+            # Normally we can loop starting a n^2, but since we are collecting
+            # factors, we need to start at n
+            for j in range(i, limit + 1, i):
+                factors[j] += (i, )
+
+
+    return factors
+
 
 
 def count_proper_divisors(prime_factors):
