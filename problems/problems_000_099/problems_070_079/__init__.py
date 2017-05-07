@@ -1,4 +1,5 @@
 
+from .problem_077 import problem_077
 from .problem_075 import problem_075
 from .problem_072 import problem_072
 from .problem_073 import problem_073
@@ -8,6 +9,7 @@ from .problem_070 import problem_070
 from .problem_076 import problem_076
 
 all_commands = [
+    problem_077,
     problem_075,
     problem_072,
     problem_073,
