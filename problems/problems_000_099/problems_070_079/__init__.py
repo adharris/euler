@@ -5,6 +5,7 @@ from .problem_073 import problem_073
 from .problem_074 import problem_074
 from .problem_071 import problem_071
 from .problem_070 import problem_070
+from .problem_076 import problem_076
 
 all_commands = [
     problem_075,
@@ -13,6 +14,7 @@ all_commands = [
     problem_074,
     problem_071,
     problem_070,
+    problem_076,
 ]
 
 __all__ = ['all_commands']

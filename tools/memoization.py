@@ -25,7 +25,10 @@ class Memoize(object):
         if self.arg_count is not None:
             return args[:self.arg_count]
         
-        return (args, kwargs.items())
+        if len(kwargs) > 0:
+            return (args, tuple(kwargs.items()))
+        
+        return args
 
 
     def __call__(self, fn):
