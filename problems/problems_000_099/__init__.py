@@ -3,6 +3,7 @@ from itertools import chain
 from .problems_010_019 import all_commands as problems_010_019
 from .problems_020_029 import all_commands as problems_020_029
 from .problems_030_039 import all_commands as problems_030_039
+from .problems_090_099 import all_commands as problems_090_099
 from .problems_000_009 import all_commands as problems_000_009
 from .problems_060_069 import all_commands as problems_060_069
 from .problems_070_079 import all_commands as problems_070_079
@@ -14,6 +15,7 @@ all_commands = list(chain(
     problems_010_019,
     problems_020_029,
     problems_030_039,
+    problems_090_099,
     problems_000_009,
     problems_060_069,
     problems_070_079,

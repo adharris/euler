@@ -68,6 +68,23 @@ def factor_with_primes(number, primes):
     return factors
 
 
+def find_divisors(number, primes):
+    factors = []
+    for prime in primes:
+        count = 0
+        while number % prime == 0:
+            number //= prime
+            factors.append(prime)
+    # return factors
+
+    return list(sorted(set(reduce(mul, items, 1) for items in powerset(factors))))
+
+
+def powerset(iterable):
+    return chain.from_iterable(
+        combinations(iterable, n) for n in range(len(iterable) + 1))
+
+
 class PrimeCache(object):
     """A container that can be used to repeatedly factor numbers, reusing the
     calculated prime lists between factorings"""
